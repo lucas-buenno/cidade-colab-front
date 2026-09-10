@@ -1,0 +1,163 @@
+@import url("https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap");
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #f8fafc;
+  --foreground: #020617;
+  --surface: #ffffff;
+  --surface-foreground: #020617;
+  --muted: #e8ecf1;
+  --muted-foreground: #475569;
+  --border: #e2e8f0;
+  --primary: #0f172a;
+  --on-primary: #ffffff;
+  --secondary: #334155;
+  --on-secondary: #ffffff;
+  --accent: #0369a1;
+  --on-accent: #ffffff;
+  --destructive: #dc2626;
+  --on-destructive: #ffffff;
+  --ring: #0f172a;
+  --success: #047857;
+  --warning: #b45309;
+  --overlay: rgb(15 23 42 / 0.55);
+  --elevation-card: 0 4px 6px rgb(15 23 42 / 0.1);
+  color-scheme: light;
+}
+
+html.dark {
+  --background: #121212;
+  --foreground: #e8eaed;
+  --surface: #192134;
+  --surface-foreground: #f8fafc;
+  --muted: #1a1e2f;
+  --muted-foreground: #cbd5e1;
+  --border: #3f3f46;
+  --primary: #4338ca;
+  --on-primary: #ffffff;
+  --secondary: #6366f1;
+  --on-secondary: #0f172a;
+  --accent: #7c3aed;
+  --on-accent: #ffffff;
+  --destructive: #f87171;
+  --on-destructive: #0f172a;
+  --ring: #c7d2fe;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --overlay: rgb(0 0 0 / 0.72);
+  --elevation-card: 0 8px 24px rgb(0 0 0 / 0.45);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-sans: "Atkinson Hyperlegible", ui-sans-serif, system-ui, sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-foreground: var(--surface-foreground);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--surface-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-secondary: var(--secondary);
+  --color-on-secondary: var(--on-secondary);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-destructive: var(--destructive);
+  --color-on-destructive: var(--on-destructive);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-overlay: var(--overlay);
+  --color-text-primary: var(--foreground);
+  --color-text-secondary: var(--muted-foreground);
+
+  --shadow-card: var(--elevation-card);
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--background);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  font-family: inherit;
+  background: var(--muted);
+}
+
+.leaflet-control-attribution {
+  font-size: 10px;
+}
+
+.colab-map-pin-dot {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: var(--accent);
+  border: 2px solid var(--surface);
+  box-shadow: 0 1px 4px rgb(15 23 42 / 0.35);
+}
+
+html.dark .leaflet-control-zoom a {
+  background: var(--surface);
+  color: var(--foreground);
+  border-color: var(--border);
+}
+
+html.dark .leaflet-control-zoom a:hover {
+  background: var(--muted);
+}
+
+html.dark .leaflet-bar {
+  border-color: var(--border);
+}
+
+html.dark .leaflet-control-attribution {
+  background: var(--surface);
+  color: var(--muted-foreground);
+}
+
+html.dark .leaflet-control-attribution a {
+  color: var(--accent);
+}

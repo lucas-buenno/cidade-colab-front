@@ -31,7 +31,7 @@ export function formatLocationName(location: {
     .filter(Boolean)
     .join(", ");
   const parts = [streetPart, location.neighborhood.trim()].filter(Boolean);
-  return parts.join(" — ") || "Local da ocorrência";
+  return parts.join(" — ") || "Local da colaboração";
 }
 
 export function locationCoordinates(

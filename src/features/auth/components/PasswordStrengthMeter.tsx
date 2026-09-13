@@ -20,14 +20,16 @@ type Props = {
 export function PasswordStrengthMeter({ strength }: Props) {
   if (strength === "empty") {
     return (
-      <p className="text-sm text-muted-foreground">{messages.password.hint}</p>
+      <p className="text-[12px] tracking-[-0.6px] text-field-ink">
+        {messages.password.hint}
+      </p>
     );
   }
 
   return (
     <div className="flex flex-col gap-1" data-testid="password-strength">
       <div
-        className="h-1.5 overflow-hidden rounded-full bg-muted"
+        className="h-2 overflow-hidden rounded-lg border-[3px] border-foreground bg-muted"
         role="meter"
         aria-valuemin={0}
         aria-valuemax={3}
@@ -35,12 +37,11 @@ export function PasswordStrengthMeter({ strength }: Props) {
         aria-label={messages.password.strengthLabel}
         aria-valuetext={labels[strength]}
       >
-        <div className={`h-full rounded-full transition-all duration-200 ${barClass[strength]}`} />
+        <div className={`h-full ${barClass[strength]} transition-[width] duration-200 ease-out`} />
       </div>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-[12px] tracking-[-0.6px] text-field-ink">
         {messages.password.strengthLabel}:{" "}
-        <span className="font-bold text-foreground">{labels[strength]}</span>
-        . {messages.password.hint}
+        <span className="font-bold">{labels[strength]}</span>. {messages.password.hint}
       </p>
     </div>
   );

@@ -2,15 +2,33 @@ import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { useSessionStore } from "@/features/auth/sessionStore";
 import { normalizeHttpError } from "@/shared/api/errors";
 
-const AUTH_PUBLIC_PATHS = ["/auth", "/v1/users"];
+const AUTH_PUBLIC_PATHS = [
+  "/auth",
+  "/auth/forgot-password",
+  "/auth/reset-password",
+  "/v1/users",
+];
 
 function isPublicAuthRequest(config: InternalAxiosRequestConfig): boolean {
   const url = config.url ?? "";
   return AUTH_PUBLIC_PATHS.some((path) => url === path || url.endsWith(path));
 }
 
+function resolveApiBaseUrl(): string {
+  if (import.meta.env.DEV) {
+    return "";
+  }
+
+  const configured = import.meta.env.VITE_API_BASE_URL?.trim();
+  if (!configured) {
+    throw new Error("VITE_API_BASE_URL is not configured for this build.");
+  }
+
+  return configured;
+}
+
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8081",
+  baseURL: resolveApiBaseUrl(),
   timeout: 10_000,
   headers: {
     "Content-Type": "application/json",
@@ -18,6 +36,10 @@ export const apiClient = axios.create({
 });
 
 apiClient.interceptors.request.use((config) => {
+  if (typeof FormData !== "undefined" && config.data instanceof FormData) {
+    config.headers.delete("Content-Type");
+  }
+
   const token = useSessionStore.getState().accessToken;
   if (token && !isPublicAuthRequest(config)) {
     config.headers.Authorization = `Bearer ${token}`;

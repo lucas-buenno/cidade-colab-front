@@ -6,6 +6,7 @@ export type AppErrorKind =
   | "forbidden"
   | "not_found"
   | "conflict"
+  | "rate_limited"
   | "timeout"
   | "offline"
   | "network"
@@ -55,6 +56,16 @@ function mentionsUsername(text: string): boolean {
 
 function mentionsEmail(text: string): boolean {
   return /e-?mail|correo/i.test(text);
+}
+
+function mentionsPassword(text: string): boolean {
+  return /senha|password/i.test(text);
+}
+
+function mentionsResetLink(text: string): boolean {
+  return /link inválido|expirad|expired|invalid.?token|invalid.?link/i.test(
+    text,
+  );
 }
 
 export function isOffline(): boolean {
@@ -123,12 +134,12 @@ export function normalizeHttpError(error: unknown): AppError {
     };
   }
 
-  if (status === 413) {
+  if (status === 413 || isUploadSizeMessage(bodyMessage)) {
     return {
       kind: "validation",
       status,
-      message: messages.create.imageTooLarge,
-      retryable: false,
+      message: messages.create.imageUploadFailed,
+      retryable: true,
     };
   }
 
@@ -139,11 +150,36 @@ export function normalizeHttpError(error: unknown): AppError {
   if (status === 400) {
     const conflict = maybeConflictFromMessage(bodyMessage, status);
     if (conflict) return conflict;
+    const fields = extractFieldErrors(err.response?.data);
+    if (!fields && mentionsResetLink(bodyMessage ?? "")) {
+      return {
+        kind: "validation",
+        status,
+        message: bodyMessage ?? messages.login.resetInvalidLink,
+        retryable: false,
+      };
+    }
+    const passwordField =
+      !fields && mentionsPassword(bodyMessage ?? "") ? "password" : undefined;
+    const emailField =
+      !fields && !passwordField && mentionsEmail(bodyMessage ?? "")
+        ? "email"
+        : undefined;
     return {
       kind: "validation",
       status,
       message: bodyMessage ?? messages.errors.validationGeneric,
-      fields: extractFieldErrors(err.response?.data),
+      field: emailField ?? passwordField,
+      fields,
+      retryable: false,
+    };
+  }
+
+  if (status === 429) {
+    return {
+      kind: "rate_limited",
+      status,
+      message: messages.errors.rateLimited,
       retryable: false,
     };
   }
@@ -163,6 +199,13 @@ export function normalizeHttpError(error: unknown): AppError {
     message: messages.errors.unexpected,
     retryable: true,
   };
+}
+
+function isUploadSizeMessage(text: string | undefined): boolean {
+  if (!text) return false;
+  return /upload size|max.?file|file size|too large|payload too large|ultrapass/i.test(
+    text,
+  );
 }
 
 function extractFieldErrors(data: unknown): Record<string, string> | undefined {

@@ -1,11 +1,10 @@
 import {
   CircleNotch,
-  Image as ImageIcon,
   Trash,
-  UploadSimple,
 } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import { prepareColab } from "@/features/colab/api";
+import uploadUrl from "@/assets/icons/upload.svg";
 import type { AppError } from "@/shared/api/errors";
 import { messages } from "@/shared/i18n/pt-BR";
 import type { PrepareColabResponse } from "@/shared/types/colab";
@@ -102,12 +101,11 @@ export function ImageUploadField({
   };
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-bold text-foreground">
+    <div className="flex flex-col gap-1">
+      <label htmlFor={id} className="text-base font-normal tracking-[-0.8px] text-field-ink">
         {messages.create.imageLabel}
-        <span className="text-destructive"> *</span>
       </label>
-      <p id={hintId} className="text-sm text-muted-foreground">
+      <p id={hintId} className="sr-only">
         {messages.create.imageHint}
       </p>
 
@@ -147,12 +145,12 @@ export function ImageUploadField({
           setDragging(false);
           void handleFiles(event.dataTransfer.files[0]);
         }}
-        className={`relative flex min-h-52 cursor-pointer flex-col overflow-hidden rounded-xl border-2 border-dashed bg-card outline-none transition-colors duration-200 ${
+        className={`relative flex h-56 min-h-56 cursor-pointer flex-col overflow-hidden rounded border-2 border-dashed bg-white outline-none md:h-72 lg:h-80 ${
           error
             ? "border-destructive"
             : dragging
-              ? "border-accent bg-accent/5"
-              : "border-border hover:border-accent"
+              ? "border-field-ink bg-feed-tag"
+              : "border-field-ink"
         }`}
       >
         {previewSrc ? (
@@ -160,33 +158,39 @@ export function ImageUploadField({
             <img
               src={previewSrc}
               alt=""
-              className="aspect-video h-full w-full object-cover"
+              className="h-full w-full object-cover"
             />
             {uploading ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-overlay text-on-primary">
                 <CircleNotch className="size-8 animate-spin" aria-hidden="true" />
-                <span className="text-sm font-bold">
+                <span className="text-base font-bold">
                   {messages.create.imageUploading} {progress}%
                 </span>
               </div>
             ) : null}
           </>
         ) : (
-          <div className="flex flex-1 flex-col items-center justify-center gap-2 px-4 py-8 text-center">
-            <span className="flex size-12 items-center justify-center rounded-full bg-muted text-foreground">
-              <UploadSimple className="size-6" aria-hidden="true" />
+          <div className="flex flex-1 flex-col items-center justify-center gap-6 px-4 py-8 text-center">
+            <span className="inline-flex items-end justify-end rounded-[12px] border-[3px] border-feed-ink bg-feed-yellow p-4 shadow-[3px_4px_0_0_#0d0d0d]">
+              <img
+                src={uploadUrl}
+                alt=""
+                width={24}
+                height={24}
+                className="block size-6"
+                aria-hidden="true"
+              />
             </span>
-            <p className="text-sm font-bold text-foreground">
+            <p className="text-base tracking-[-0.8px] text-field-placeholder">
               {messages.create.imageDrop}
             </p>
-            <ImageIcon className="size-5 text-muted-foreground" aria-hidden="true" />
           </div>
         )}
       </div>
 
       <div
         id={progressId}
-        className="h-2 overflow-hidden rounded-full bg-muted"
+        className="h-2 overflow-hidden rounded-lg border-[3px] border-foreground bg-muted"
         role="progressbar"
         aria-label={messages.create.imageProgress}
         aria-valuemin={0}
@@ -194,7 +198,7 @@ export function ImageUploadField({
         aria-valuenow={uploading ? progress : value ? 100 : 0}
       >
         <div
-          className="h-full rounded-full bg-accent transition-[width] duration-200"
+          className="h-full bg-primary"
           style={{
             width: `${uploading ? progress : value ? 100 : 0}%`,
             opacity: uploading || value ? 1 : 0,
@@ -203,11 +207,11 @@ export function ImageUploadField({
       </div>
 
       {value && !uploading ? (
-        <p className="text-sm font-bold text-success" role="status">
+        <p className="text-base font-bold text-success" role="status">
           {messages.create.imageUploaded}
         </p>
       ) : (
-        <p className="min-h-5 text-sm text-muted-foreground">
+        <p className="min-h-6 text-base text-muted-foreground">
           {localPreview && !value && !uploading
             ? messages.create.imagePreviewUnavailable
             : ""}
@@ -220,7 +224,7 @@ export function ImageUploadField({
             type="button"
             onClick={openPicker}
             disabled={uploading || disabled}
-            className="inline-flex min-h-11 cursor-pointer items-center rounded-lg px-3 text-sm font-bold text-accent transition-opacity duration-200 hover:underline disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex min-h-11 cursor-pointer items-center rounded-xl border-[3px] border-foreground px-3 text-base font-bold text-foreground hover:bg-secondary disabled:cursor-not-allowed disabled:opacity-60"
           >
             {messages.create.imageChange}
           </button>
@@ -236,7 +240,7 @@ export function ImageUploadField({
               onErrorChange(undefined);
             }}
             disabled={disabled}
-            className="inline-flex min-h-11 cursor-pointer items-center gap-1 rounded-lg px-3 text-sm font-bold text-destructive transition-opacity duration-200 hover:underline disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex min-h-11 cursor-pointer items-center gap-1 rounded-xl border-[3px] border-foreground px-3 text-base font-bold text-foreground hover:bg-accent hover:text-on-accent disabled:cursor-not-allowed disabled:opacity-60"
           >
             <Trash className="size-4" aria-hidden="true" />
             {messages.create.imageRemove}
@@ -248,7 +252,7 @@ export function ImageUploadField({
         id={errorId}
         role={error ? "alert" : undefined}
         aria-live="polite"
-        className="min-h-5 text-sm text-destructive"
+        className="min-h-6 text-base text-destructive"
       >
         {error ?? ""}
       </p>

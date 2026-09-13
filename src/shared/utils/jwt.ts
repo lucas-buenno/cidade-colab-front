@@ -4,6 +4,7 @@ type JwtPayload = {
   exp?: number;
   preferred_username?: string;
   username?: string;
+  email?: string;
   sub?: string;
   realm_access?: { roles?: string[] };
   resource_access?: Record<string, { roles?: string[] }>;
@@ -34,6 +35,7 @@ export function decodeAccessToken(token: string): SessionUser | null {
 
     return {
       username: payload.preferred_username ?? payload.username,
+      email: payload.email,
       roles: [...realmRoles, ...extraRoles, ...resourceRoles],
       authorities,
       exp: payload.exp,

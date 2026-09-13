@@ -1,6 +1,7 @@
-import { Eye, EyeSlash } from "@phosphor-icons/react";
+import { EyeSlash } from "@phosphor-icons/react";
 import { forwardRef, useState } from "react";
 import type { InputHTMLAttributes, ReactNode } from "react";
+import visibilityUrl from "@/assets/icons/visibility.svg";
 import { TextField } from "@/shared/components/TextField";
 import { messages } from "@/shared/i18n/pt-BR";
 
@@ -31,12 +32,19 @@ export const PasswordField = forwardRef<HTMLInputElement, Props>(
             aria-label={toggleLabel}
             aria-pressed={visible}
             data-testid={`${id}-toggle-visibility`}
-            className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-opacity duration-200 hover:opacity-80"
+            className="inline-flex size-11 cursor-pointer items-center justify-center text-field-placeholder hover:text-field-ink"
           >
             {visible ? (
-              <EyeSlash className="size-5" aria-hidden="true" />
+              <EyeSlash className="size-6" aria-hidden="true" />
             ) : (
-              <Eye className="size-5" aria-hidden="true" />
+              <img
+                src={visibilityUrl}
+                alt=""
+                width={24}
+                height={24}
+                className="block size-6"
+                aria-hidden="true"
+              />
             )}
           </button>
         }

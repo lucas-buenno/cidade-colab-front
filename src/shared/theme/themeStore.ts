@@ -50,7 +50,7 @@ export function applyResolvedTheme(resolved: ResolvedTheme): void {
   const root = document.documentElement;
   root.classList.toggle("dark", resolved === "dark");
   root.style.colorScheme = resolved;
-  const themeColor = resolved === "dark" ? "#121212" : "#0F172A";
+  const themeColor = resolved === "dark" ? "#121212" : "#D6FF3E";
   document
     .querySelector('meta[name="theme-color"]')
     ?.setAttribute("content", themeColor);

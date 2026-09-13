@@ -4,7 +4,8 @@ import {
   type LocationFormValue,
 } from "@/shared/utils/location";
 
-const STORAGE_KEY = "cidade-colab.create-draft.v1";
+const STORAGE_KEY = "cidade-colab.create-draft.v2";
+export const MAX_CREATE_CATEGORIES = 2;
 
 export type CreateColabDraft = {
   title: string;
@@ -48,7 +49,8 @@ function isPrepare(value: unknown): value is PrepareColabResponse {
 
 export function readCreateDraft(): CreateColabDraft | null {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    localStorage.removeItem("cidade-colab.create-draft.v1");
+    const raw = sessionStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as Partial<CreateColabDraft>;
     if (typeof parsed.title !== "string") return null;
@@ -56,7 +58,9 @@ export function readCreateDraft(): CreateColabDraft | null {
       title: parsed.title,
       description: typeof parsed.description === "string" ? parsed.description : "",
       categoriesSlugs: Array.isArray(parsed.categoriesSlugs)
-        ? parsed.categoriesSlugs.filter((slug) => typeof slug === "string")
+        ? parsed.categoriesSlugs
+            .filter((slug) => typeof slug === "string")
+            .slice(0, MAX_CREATE_CATEGORIES)
         : [],
       location: isLocation(parsed.location) ? parsed.location : EMPTY_LOCATION,
       prepare: isPrepare(parsed.prepare) ? parsed.prepare : null,
@@ -68,11 +72,18 @@ export function readCreateDraft(): CreateColabDraft | null {
 }
 
 export function writeCreateDraft(draft: CreateColabDraft): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+  sessionStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify({
+      ...draft,
+      categoriesSlugs: draft.categoriesSlugs.slice(0, MAX_CREATE_CATEGORIES),
+    }),
+  );
 }
 
 export function clearCreateDraft(): void {
-  localStorage.removeItem(STORAGE_KEY);
+  sessionStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem("cidade-colab.create-draft.v1");
 }
 
 export function emptyCreateDraft(): CreateColabDraft {

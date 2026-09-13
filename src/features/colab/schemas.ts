@@ -6,7 +6,8 @@ export const createColabSchema = z.object({
   description: z.string().trim().min(1, messages.create.descriptionRequired),
   categoriesSlugs: z
     .array(z.string())
-    .min(1, messages.create.categoryRequired),
+    .min(1, messages.create.categoryRequired)
+    .max(2, messages.create.categoryMax),
   location: z.object({
     name: z.string(),
     reference: z.string(),

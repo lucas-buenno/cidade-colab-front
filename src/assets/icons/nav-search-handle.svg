@@ -1,0 +1,13 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="6.02405" height="6.01475" viewBox="0 0 6.02405 6.01475" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 6">
+<mask id="mask0_0_107" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="7" height="7">
+<path id="Clip 5" fill-rule="evenodd" clip-rule="evenodd" d="M0.5 0.5H5.52405V5.51475H0.5V0.5Z" fill="white" stroke="white"/>
+</mask>
+<g mask="url(#mask0_0_107)">
+<g id="Fill 4">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M4.77425 5.51475C4.58325 5.51475 4.39125 5.44175 4.24425 5.29575L0.720251 1.78175C0.427251 1.48875 0.426251 1.01375 0.719251 0.72075C1.01125 0.42575 1.48625 0.42775 1.78025 0.71875L5.30425 4.23375C5.59725 4.52675 5.59825 5.00075 5.30525 5.29375C5.15925 5.44175 4.96625 5.51475 4.77425 5.51475" fill="black"/>
+<path d="M4.77425 5.51475C4.58325 5.51475 4.39125 5.44175 4.24425 5.29575L0.720251 1.78175C0.427251 1.48875 0.426251 1.01375 0.719251 0.72075C1.01125 0.42575 1.48625 0.42775 1.78025 0.71875L5.30425 4.23375C5.59725 4.52675 5.59825 5.00075 5.30525 5.29375C5.15925 5.44175 4.96625 5.51475 4.77425 5.51475" stroke="black"/>
+</g>
+</g>
+</g>
+</svg>

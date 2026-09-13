@@ -23,10 +23,10 @@ export function RequestErrorBanner({
       role="alert"
       tabIndex={-1}
       data-testid={testId}
-      className="rounded-lg border border-destructive/30 bg-destructive/5 p-4 text-foreground"
+      className="rounded-xl border-[3px] border-foreground bg-accent p-4 text-on-accent shadow-card"
     >
       <div className="flex gap-3">
-        <Icon className="mt-0.5 size-6 shrink-0 text-destructive" aria-hidden="true" />
+        <Icon className="mt-0.5 size-6 shrink-0 text-on-accent" aria-hidden="true" />
         <div className="flex flex-col gap-2">
           <p className="text-sm font-bold">{error.message}</p>
           {showRetry ? (
@@ -34,7 +34,7 @@ export function RequestErrorBanner({
               type="button"
               onClick={onRetry}
               data-testid={`${testId}-retry`}
-              className="min-h-11 w-fit cursor-pointer rounded-md px-3 text-left text-sm font-bold text-accent underline-offset-2 hover:underline"
+              className="min-h-11 w-fit cursor-pointer rounded-xl border-[3px] border-foreground bg-surface px-3 text-left font-mono text-xs font-bold tracking-wider text-foreground uppercase"
             >
               {error.kind === "offline"
                 ? messages.actions.retryWhenOnline

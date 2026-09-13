@@ -57,10 +57,17 @@ export type ColabResponse = {
   categories: CategoryResponse[];
   status: string;
   supportCount: number;
+  supportedByMe: boolean;
   location: Location;
   createdAt: string;
   updatedAt: string;
   imageUrl: string;
+  distanceMeters?: number | null;
+};
+
+export type SupportResponse = {
+  supportCount: number;
+  supportedByMe: boolean;
 };
 
 export type FeedPage = {

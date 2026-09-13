@@ -16,8 +16,11 @@ export const TextField = forwardRef<HTMLInputElement, Props>(function TextField(
   const hintId = hint ? `${id}-hint` : undefined;
 
   return (
-    <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-bold text-foreground">
+    <div className={`flex flex-col ${hint ? "gap-2" : "gap-1"}`}>
+      <label
+        htmlFor={id}
+        className="text-base font-normal tracking-[-0.8px] text-field-ink"
+      >
         {label}
       </label>
       <div className="relative">
@@ -27,18 +30,18 @@ export const TextField = forwardRef<HTMLInputElement, Props>(function TextField(
           ref={ref}
           aria-invalid={Boolean(error)}
           aria-describedby={[hintId, errorId].filter(Boolean).join(" ") || undefined}
-          className={`min-h-11 w-full rounded-lg border bg-card px-3 py-2.5 text-base text-card-foreground placeholder:text-muted-foreground outline-none ${
-            trailing ? "pr-12" : ""
-          } ${error ? "border-destructive" : "border-border"} ${className}`}
+          className={`min-h-12 w-full rounded border-2 bg-white p-4 text-base font-normal tracking-[-0.8px] text-black shadow-[2px_2px_0_0_#000] outline-none placeholder:text-field-placeholder focus-visible:shadow-[2px_2px_0_0_#000] ${
+            trailing ? "pr-14" : ""
+          } ${error ? "border-destructive" : "border-field-ink"} ${className}`}
         />
         {trailing ? (
-          <div className="absolute inset-y-0 right-0 flex items-center pr-1.5">
+          <div className="absolute inset-y-0 right-0 flex items-center pr-4">
             {trailing}
           </div>
         ) : null}
       </div>
       {hint ? (
-        <div id={hintId} className="text-sm text-muted-foreground">
+        <div id={hintId} className="text-[12px] tracking-[-0.6px] text-field-ink">
           {hint}
         </div>
       ) : null}
@@ -47,7 +50,7 @@ export const TextField = forwardRef<HTMLInputElement, Props>(function TextField(
         role={error ? "alert" : undefined}
         aria-live="polite"
         data-testid={errorId}
-        className="min-h-5 text-sm text-destructive"
+        className="text-base text-destructive"
       >
         {error ?? ""}
       </p>

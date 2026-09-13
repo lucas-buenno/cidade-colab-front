@@ -2,9 +2,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { AuthLayout } from "@/features/auth/components/AuthLayout";
+import { LoginLayout } from "@/features/auth/components/LoginLayout";
 import { useLogin } from "@/features/auth/hooks/useLogin";
 import { loginSchema, type LoginFormValues } from "@/features/auth/schemas";
+import arrowRightAltUrl from "@/assets/icons/arrow-right-alt.svg";
 import { Button } from "@/shared/components/Button";
 import { FormErrorSummary } from "@/shared/components/FormErrorSummary";
 import { PasswordField } from "@/shared/components/PasswordField";
@@ -19,6 +20,7 @@ import { sanitizeText } from "@/shared/utils/sanitize";
 type LoginLocationState = {
   username?: string;
   accountCreated?: boolean;
+  passwordReset?: boolean;
 };
 
 function fingerprint(values: LoginFormValues): string {
@@ -109,7 +111,7 @@ export function LoginPage() {
       {
         onSuccess: () => {
           setBlockedFingerprint(null);
-          navigate(redirectTo, { replace: true });
+          navigate("/", { replace: true });
         },
         onError: (error) => {
           setRequestError(error);
@@ -132,9 +134,14 @@ export function LoginPage() {
     Boolean(blockedFingerprint) && currentFingerprint === blockedFingerprint;
 
   return (
-    <AuthLayout title={messages.login.title} subtitle={messages.login.subtitle}>
+    <LoginLayout>
       <div ref={bannerRef} tabIndex={-1} className="outline-none">
-        {locationState?.accountCreated && !requestError ? (
+        {locationState?.passwordReset && !requestError ? (
+          <SuccessBanner
+            message={messages.login.resetSuccess}
+            testId="login-password-reset-banner"
+          />
+        ) : locationState?.accountCreated && !requestError ? (
           <SuccessBanner
             message={messages.register.success}
             testId="login-account-created-banner"
@@ -153,56 +160,86 @@ export function LoginPage() {
       </div>
 
       <form
-        className="mt-6 flex flex-col gap-4"
+        className="flex flex-col gap-[25px]"
         onSubmit={handleSubmit(submitLogin, onInvalid)}
         noValidate
         data-testid="login-form"
       >
+        <h1 className="max-w-[334px] text-[40px] leading-[1.031] font-extrabold tracking-[-2px] text-black">
+          {messages.login.headline}
+        </h1>
+
         {submitCount > 0 ? (
           <FormErrorSummary title={messages.errors.summaryTitle} items={fieldErrors} />
         ) : null}
 
-        <TextField
-          id="username"
-          label={messages.fields.username}
-          autoComplete="username"
-          autoCapitalize="none"
-          spellCheck={false}
-          data-testid="login-username"
-          error={errors.username?.message}
-          {...register("username")}
-        />
+        <div className="flex flex-col gap-[25px]">
+          <TextField
+            id="username"
+            label={messages.login.username}
+            placeholder={messages.login.usernamePlaceholder}
+            autoComplete="username"
+            autoCapitalize="none"
+            spellCheck={false}
+            data-testid="login-username"
+            error={errors.username?.message}
+            {...register("username")}
+          />
 
-        <PasswordField
-          id="password"
-          label={messages.fields.password}
-          autoComplete="current-password"
-          data-testid="login-password"
-          error={errors.password?.message}
-          {...register("password")}
-        />
+          <PasswordField
+            id="password"
+            label={messages.fields.password}
+            placeholder={messages.login.passwordPlaceholder}
+            autoComplete="current-password"
+            data-testid="login-password"
+            error={errors.password?.message}
+            {...register("password")}
+          />
 
-        <Button
-          type="submit"
-          loading={loading}
-          disabled={unchangedBlocked}
-          loadingLabel={messages.login.submitting}
-          data-testid="login-submit"
-        >
-          {messages.login.submit}
-        </Button>
+          <p className="text-right text-base tracking-[-0.8px] text-black">
+            <Link
+              to={withRedirectQuery("/esqueci-senha", redirectTo)}
+              data-testid="login-forgot-password-link"
+              className="font-semibold text-black underline decoration-solid underline-offset-2"
+            >
+              {messages.login.forgotPassword}
+            </Link>
+          </p>
+        </div>
+
+        <div className="py-6">
+          <Button
+            type="submit"
+            loading={loading}
+            disabled={unchangedBlocked}
+            loadingLabel={messages.login.submitting}
+            data-testid="login-submit"
+            icon={
+              <img
+                src={arrowRightAltUrl}
+                alt=""
+                width={32}
+                height={32}
+                className="block size-8 shrink-0"
+                aria-hidden="true"
+              />
+            }
+          >
+            {messages.login.submit}
+          </Button>
+        </div>
       </form>
 
-      <p className="mt-6 text-center text-sm text-muted-foreground">
+      <p className="text-center text-base tracking-[-0.8px] text-black">
         {messages.login.noAccount}{" "}
         <Link
           to={withRedirectQuery("/cadastro", redirectTo)}
           data-testid="login-register-link"
-          className="inline-flex min-h-11 items-center font-bold text-accent underline-offset-2 hover:underline"
+          className="font-semibold text-black underline decoration-solid underline-offset-2"
         >
           {messages.login.goToRegister}
         </Link>
       </p>
-    </AuthLayout>
+    </LoginLayout>
   );
 }

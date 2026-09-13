@@ -1,6 +1,7 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { loginRequest, registerRequest } from "@/features/auth/api";
 import { useSessionStore } from "@/features/auth/sessionStore";
+import { invalidateColabQueries } from "@/features/feed/hooks/useSupportColab";
 import type { AppError } from "@/shared/api/errors";
 import { messages } from "@/shared/i18n/pt-BR";
 import type { CreateUserRequest } from "@/shared/types/auth";
@@ -10,6 +11,7 @@ export type RegisterResult = {
 };
 
 export function useRegister() {
+  const queryClient = useQueryClient();
   const setSession = useSessionStore((state) => state.setSession);
 
   return useMutation<RegisterResult, AppError, CreateUserRequest>({
@@ -33,6 +35,7 @@ export function useRegister() {
     },
     onSuccess: ({ accessToken }) => {
       setSession(accessToken);
+      invalidateColabQueries(queryClient);
     },
   });
 }

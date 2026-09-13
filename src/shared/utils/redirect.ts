@@ -9,8 +9,19 @@ export function getSafeRedirectTo(value: string | null): string | null {
     return null;
   }
   if (!SAFE_REDIRECT.test(decoded)) return null;
-  if (decoded.startsWith("/login") || decoded.startsWith("/cadastro")) return null;
-  if (decoded === "/colab/novo" || decoded.startsWith("/colab/novo?")) return null;
+  if (
+    decoded.startsWith("/login") ||
+    decoded.startsWith("/cadastro") ||
+    decoded.startsWith("/esqueci-senha") ||
+    decoded.startsWith("/redefinir-senha")
+  ) {
+    return null;
+  }
+  if (decoded === "/colab" || decoded.startsWith("/colab/")) return null;
+  if (decoded === "/perfil" || decoded.startsWith("/perfil?")) return null;
+  if (decoded === "/minhas-colabs" || decoded.startsWith("/minhas-colabs?")) {
+    return null;
+  }
   return decoded;
 }
 

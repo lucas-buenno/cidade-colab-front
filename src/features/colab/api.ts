@@ -19,7 +19,6 @@ export async function prepareColab(
     {
       timeout: 120_000,
       signal,
-      headers: { "Content-Type": false as unknown as string },
       onUploadProgress: (event) => {
         if (!event.total) return;
         onProgress?.(Math.round((event.loaded / event.total) * 100));

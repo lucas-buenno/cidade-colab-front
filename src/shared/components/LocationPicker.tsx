@@ -1,9 +1,4 @@
-import {
-  CircleNotch,
-  Keyboard,
-  MapPin,
-  NavigationArrow,
-} from "@phosphor-icons/react";
+import { CircleNotch } from "@phosphor-icons/react";
 import L from "leaflet";
 import { useEffect, useRef, useState } from "react";
 import { TextField } from "@/shared/components/TextField";
@@ -28,6 +23,7 @@ type Props = {
     name?: string;
   };
   readOnly?: boolean;
+  mapOnly?: boolean;
 };
 
 const LIGHT_TILES = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
@@ -70,6 +66,7 @@ export function LocationPicker({
   onChange,
   errors,
   readOnly = false,
+  mapOnly = false,
 }: Props) {
   const mapNodeRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -88,9 +85,7 @@ export function LocationPicker({
   const [locating, setLocating] = useState(false);
   const [geocoding, setGeocoding] = useState(false);
   const [geoError, setGeoError] = useState<string | undefined>();
-  const [manualOpen, setManualOpen] = useState(
-    () => readOnly || hasTypedAddress(value),
-  );
+  const [manualOpen, setManualOpen] = useState(false);
 
   onChangeRef.current = onChange;
   valueRef.current = value;
@@ -118,7 +113,6 @@ export function LocationPicker({
 
     if (!result) {
       setGeoError(messages.create.reverseGeoFailed);
-      setManualOpen(true);
       return;
     }
 
@@ -147,7 +141,7 @@ export function LocationPicker({
       : DEFAULT_MAP_CENTER;
 
     const map = L.map(node, {
-      zoomControl: true,
+      zoomControl: false,
       attributionControl: true,
       dragging: !readOnly,
       scrollWheelZoom: !readOnly,
@@ -156,7 +150,9 @@ export function LocationPicker({
       keyboard: !readOnly,
     }).setView(start, valueRef.current.coordinates ? 16 : 13);
 
-    const initialTiles = tileOptions(useThemeStore.getState().resolved);
+    const initialTiles = tileOptions(
+      mapOnly ? "light" : useThemeStore.getState().resolved,
+    );
     tileLayerRef.current = L.tileLayer(initialTiles.url, {
       attribution: initialTiles.attribution,
       maxZoom: initialTiles.maxZoom,
@@ -208,12 +204,12 @@ export function LocationPicker({
       markerRef.current = null;
       tileLayerRef.current = null;
     };
-  }, [readOnly]);
+  }, [readOnly, mapOnly]);
 
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
-    const next = tileOptions(resolvedTheme);
+    const next = tileOptions(mapOnly ? "light" : resolvedTheme);
     tileLayerRef.current?.remove();
     const layer = L.tileLayer(next.url, {
       attribution: next.attribution,
@@ -221,7 +217,7 @@ export function LocationPicker({
     }).addTo(map);
     layer.bringToBack();
     tileLayerRef.current = layer;
-  }, [resolvedTheme]);
+  }, [mapOnly, resolvedTheme]);
 
   useEffect(() => {
     if (!value.coordinates || !mapRef.current) return;
@@ -286,70 +282,81 @@ export function LocationPicker({
     ? "location-coordinates-error"
     : undefined;
   const summary = formatLocationName(value);
+  const locationActionClass =
+    "inline-flex min-h-0 min-w-px flex-1 cursor-pointer items-center justify-center rounded-[4px] border-2 border-black px-4 py-2 text-center text-[12px] leading-normal font-semibold tracking-[-0.6px] text-nowrap text-black shadow-[2px_2px_0_0_black] disabled:cursor-not-allowed disabled:opacity-60";
 
   return (
-    <fieldset className="min-w-0 rounded-xl border border-border bg-card p-4">
-      <legend className="px-1 text-sm font-bold text-foreground">
-        {messages.create.locationLabel}
-        {readOnly ? null : <span className="text-destructive"> *</span>}
-      </legend>
+    <div className={`flex w-full flex-col ${mapOnly ? "" : "gap-4"}`}>
+      {mapOnly ? null : (
+        <p className="text-base font-normal tracking-[-0.8px] text-field-ink">
+          {messages.create.locationLabel}
+        </p>
+      )}
 
-      {readOnly ? (
-        <div className="mt-3 space-y-1 text-sm text-foreground">
+      {mapOnly ? null : readOnly ? (
+        <div className="space-y-1 text-base text-black">
           {value.name || summary ? (
-            <p className="font-bold">{value.name || summary}</p>
+            <p className="font-semibold">{value.name || summary}</p>
           ) : null}
           {value.reference ? (
-            <p className="text-muted-foreground">{value.reference}</p>
+            <p className="text-field-ink">{value.reference}</p>
           ) : null}
         </div>
       ) : (
-        <div className="mt-3 flex flex-col gap-2">
+        <div className="flex w-full gap-2">
           <button
             type="button"
             onClick={useMyLocation}
             disabled={busy}
-            className="inline-flex min-h-11 w-fit cursor-pointer items-center gap-2 rounded-lg px-3 text-sm font-bold text-accent transition-opacity duration-200 hover:underline disabled:cursor-not-allowed disabled:opacity-60"
+            className={`${locationActionClass} bg-feed-tag`}
           >
             {busy ? (
-              <CircleNotch className="size-4 animate-spin" aria-hidden="true" />
-            ) : (
-              <NavigationArrow className="size-4" aria-hidden="true" />
-            )}
+              <CircleNotch
+                className="mr-1 size-4 shrink-0 animate-spin"
+                aria-hidden="true"
+              />
+            ) : null}
             {locating
               ? messages.create.locating
               : geocoding
                 ? messages.create.fillingAddress
                 : messages.create.useMyLocation}
           </button>
-
-          {manualOpen ? (
-            <button
-              type="button"
-              onClick={() => setManualOpen(false)}
-              className="inline-flex min-h-11 w-fit cursor-pointer items-center gap-2 rounded-lg px-3 text-sm font-bold text-muted-foreground transition-colors duration-200 hover:text-foreground"
-            >
-              {messages.create.hideAddressForm}
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={openManualForm}
-              className="inline-flex min-h-11 w-fit cursor-pointer items-center gap-2 rounded-lg px-3 text-sm font-bold text-accent transition-opacity duration-200 hover:underline"
-            >
-              <Keyboard className="size-4" aria-hidden="true" />
-              {messages.create.enterAddressManually}
-            </button>
-          )}
-
-          {!manualOpen && hasTypedAddress(value) ? (
-            <p className="text-sm text-muted-foreground">{summary}</p>
-          ) : null}
+          <button
+            type="button"
+            onClick={openManualForm}
+            className={`${locationActionClass} bg-white`}
+          >
+            {messages.create.enterAddressManually}
+          </button>
         </div>
       )}
 
+      <div
+        className={
+          mapOnly
+            ? "h-[143px] w-full overflow-hidden bg-[#d9d9d9]"
+            : `h-[224px] overflow-hidden rounded-[4px] border-2 bg-white shadow-[2px_2px_0_0_#000] md:h-[320px] lg:h-[360px] ${
+                errors?.coordinates ? "border-destructive" : "border-field-ink"
+              }`
+        }
+        aria-describedby={
+          [!readOnly ? "location-map-hint" : undefined, coordinatesErrorId]
+            .filter(Boolean)
+            .join(" ") || undefined
+        }
+      >
+        <div ref={mapNodeRef} className="h-full w-full" />
+      </div>
+
+      {readOnly ? null : (
+        <p id="location-map-hint" className="sr-only">
+          {messages.create.mapHint}
+        </p>
+      )}
+
       {readOnly || !manualOpen ? null : (
-        <div className="mt-3 flex flex-col gap-1">
+        <div className="flex flex-col gap-1">
           <TextField
             id="location-postalCode"
             label={messages.create.postalCode}
@@ -401,32 +408,14 @@ export function LocationPicker({
         </div>
       )}
 
-      {readOnly ? null : (
-        <p id="location-map-hint" className="mt-3 mb-2 text-sm text-muted-foreground">
-          {messages.create.mapHint}
-        </p>
-      )}
-
-      <div
-        className={`mt-3 h-64 overflow-hidden rounded-xl border bg-muted ${
-          errors?.coordinates ? "border-destructive" : "border-border"
-        }`}
-        aria-describedby={
-          [!readOnly ? "location-map-hint" : undefined, coordinatesErrorId]
-            .filter(Boolean)
-            .join(" ") || undefined
-        }
-      >
-        <div ref={mapNodeRef} className="h-full w-full" />
-      </div>
+      {!readOnly && !manualOpen && hasTypedAddress(value) ? (
+        <p className="text-[12px] tracking-[-0.6px] text-field-ink">{summary}</p>
+      ) : null}
 
       {value.coordinates ? (
-        <p className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
-          <MapPin className="size-4 shrink-0" aria-hidden="true" />
-          <span>
-            {value.coordinates[1].toFixed(5)}, {value.coordinates[0].toFixed(5)}{" "}
-            (lat, lng)
-          </span>
+        <p className="sr-only">
+          {value.coordinates[1].toFixed(5)}, {value.coordinates[0].toFixed(5)}{" "}
+          (lat, lng)
         </p>
       ) : null}
 
@@ -434,10 +423,10 @@ export function LocationPicker({
         id={coordinatesErrorId}
         role={errors?.coordinates || geoError ? "alert" : undefined}
         aria-live="polite"
-        className="min-h-5 text-sm text-destructive"
+        className="min-h-0 text-base text-destructive"
       >
         {errors?.coordinates ?? geoError ?? ""}
       </p>
-    </fieldset>
+    </div>
   );
 }

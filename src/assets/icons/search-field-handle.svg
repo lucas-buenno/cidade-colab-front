@@ -1,0 +1,13 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="3.28585" height="3.28077" viewBox="0 0 3.28585 3.28077" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Group 6">
+<mask id="mask0_0_120" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="4" height="4">
+<path id="Clip 5" fill-rule="evenodd" clip-rule="evenodd" d="M0.272727 0.272727H3.01312V3.00805H0.272727V0.272727Z" fill="white" stroke="white" stroke-width="0.545455"/>
+</mask>
+<g mask="url(#mask0_0_120)">
+<g id="Fill 4">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M2.60414 3.00805C2.49995 3.00805 2.39523 2.96823 2.31505 2.88859L0.392864 0.971864C0.233046 0.812045 0.2325 0.552955 0.392319 0.393136C0.551591 0.232227 0.810682 0.233318 0.971046 0.392045L2.89323 2.30932C3.05305 2.46914 3.05359 2.72768 2.89377 2.8875C2.81414 2.96823 2.70886 3.00805 2.60414 3.00805" fill="black"/>
+<path d="M2.60414 3.00805C2.49995 3.00805 2.39523 2.96823 2.31505 2.88859L0.392864 0.971864C0.233046 0.812045 0.2325 0.552955 0.392319 0.393136C0.551591 0.232227 0.810682 0.233318 0.971046 0.392045L2.89323 2.30932C3.05305 2.46914 3.05359 2.72768 2.89377 2.8875C2.81414 2.96823 2.70886 3.00805 2.60414 3.00805" stroke="black" stroke-width="0.545455"/>
+</g>
+</g>
+</g>
+</svg>

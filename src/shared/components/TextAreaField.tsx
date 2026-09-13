@@ -16,8 +16,11 @@ export const TextAreaField = forwardRef<HTMLTextAreaElement, Props>(
     const hintId = hint ? `${id}-hint` : undefined;
 
     return (
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor={id} className="text-sm font-bold text-foreground">
+      <div className="flex flex-col gap-1">
+        <label
+          htmlFor={id}
+          className="text-base font-normal tracking-[-0.8px] text-field-ink"
+        >
           {label}
         </label>
         <textarea
@@ -28,12 +31,15 @@ export const TextAreaField = forwardRef<HTMLTextAreaElement, Props>(
           aria-describedby={
             [hintId, errorId].filter(Boolean).join(" ") || undefined
           }
-          className={`min-h-36 w-full resize-y rounded-lg border bg-card px-3 py-2.5 text-base text-card-foreground placeholder:text-muted-foreground outline-none ${
-            error ? "border-destructive" : "border-border"
+          className={`h-56 min-h-56 w-full resize-none rounded border-2 bg-white p-4 text-base font-normal tracking-[-0.8px] text-black shadow-[2px_2px_0_0_#000] outline-none placeholder:text-field-placeholder focus-visible:shadow-[2px_2px_0_0_#000] ${
+            error ? "border-destructive" : "border-field-ink"
           } ${className}`}
         />
         {hint ? (
-          <div id={hintId} className="text-sm text-muted-foreground">
+          <div
+            id={hintId}
+            className="text-[12px] tracking-[-0.6px] text-field-ink"
+          >
             {hint}
           </div>
         ) : null}
@@ -41,7 +47,7 @@ export const TextAreaField = forwardRef<HTMLTextAreaElement, Props>(
           id={errorId}
           role={error ? "alert" : undefined}
           aria-live="polite"
-          className="min-h-5 text-sm text-destructive"
+          className="min-h-6 text-base text-destructive"
         >
           {error ?? ""}
         </p>

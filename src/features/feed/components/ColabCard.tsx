@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Avatar } from "@/shared/components/Avatar";
+import { AuthorMark } from "@/shared/components/AuthorMark";
+import { CategoryBadge } from "@/shared/components/CategoryBadge";
 import { SupportButton } from "@/shared/components/SupportButton";
 import type { ColabResponse } from "@/shared/types/colab";
 import { absoluteDate, relativeDate } from "@/shared/utils/dateRelative";
@@ -17,67 +18,67 @@ export function ColabCard({ colab }: Props) {
   const description = sanitizeText(colab.description);
 
   return (
-    <article className="rounded-xl border border-border bg-card p-4 shadow-card">
-      <header className="flex items-center gap-3">
-        <Avatar name={authorName} />
-        <div className="min-w-0 flex-1">
-          <p className="truncate font-bold text-foreground">{authorName}</p>
-          <time
-            dateTime={colab.createdAt}
-            title={createdAbsolute}
-            className="text-sm text-muted-foreground"
-          >
-            {createdRelative || createdAbsolute}
-          </time>
+    <article className="relative flex w-full flex-col gap-4 border border-feed-hairline bg-white px-3 pt-3 pb-6 md:px-6 md:pt-6 md:pb-8 lg:px-8">
+      <header className="flex items-center gap-[9px]">
+        <div className="flex min-w-0 flex-1 items-center gap-[9px]">
+          <AuthorMark name={authorName} size={32} />
+          <p className="truncate text-[16px] leading-[1.031] font-normal tracking-[-0.8px] text-black">
+            {authorName}
+          </p>
         </div>
+        <time
+          dateTime={colab.createdAt}
+          title={createdAbsolute}
+          className="shrink-0 text-[12px] leading-[1.031] font-normal tracking-[-0.6px] text-feed-time"
+        >
+          {createdRelative || createdAbsolute}
+        </time>
       </header>
 
       {colab.imageUrl ? (
-        <Link
-          to={`/colab/${colab.id}`}
-          className="mt-3 block aspect-video w-full overflow-hidden rounded-lg bg-muted"
-        >
+        <div className="motion-media relative h-[179px] w-full overflow-hidden md:h-[260px] lg:h-[360px]">
           <img
             src={colab.imageUrl}
-            alt={`Foto da ocorrência: ${title}`}
+            alt=""
             loading="lazy"
-            className="h-full w-full object-cover"
+            className="absolute inset-0 size-full object-cover"
           />
-        </Link>
-      ) : null}
-
-      <h2 className="mt-3 text-lg font-bold leading-tight text-foreground">
-        <Link
-          to={`/colab/${colab.id}`}
-          className="underline-offset-2 hover:underline"
-        >
-          {title}
-        </Link>
-      </h2>
-
-      {description ? (
-        <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
-          {description}
-        </p>
+        </div>
       ) : null}
 
       {colab.categories.length > 0 ? (
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-[17px]">
           {colab.categories.map((category) => (
-            <span
+            <CategoryBadge
               key={category.slug}
-              className="inline-flex rounded-full border border-border bg-muted px-2.5 py-1 text-xs font-medium text-foreground"
-            >
-              {sanitizeText(category.name)}
-            </span>
+              name={category.name}
+              slug={category.slug}
+            />
           ))}
         </div>
       ) : null}
 
-      <div className="mt-4 flex items-center border-t border-border pt-3">
+      <div className="flex flex-col gap-2 text-black">
+        <h2 className="text-[32px] leading-[1.031] font-extrabold tracking-[-1.6px]">
+          <Link
+            to={`/colab/${colab.id}`}
+            className="underline-offset-4 after:absolute after:inset-0 after:z-0 after:content-[''] hover:underline hover:decoration-2"
+          >
+            {title}
+          </Link>
+        </h2>
+        {description ? (
+          <p className="text-[16px] leading-[1.031] font-normal tracking-[-0.8px]">
+            {description}
+          </p>
+        ) : null}
+      </div>
+
+      <div className="relative z-10">
         <SupportButton
           colabId={colab.id}
           supportCount={colab.supportCount}
+          supportedByMe={colab.supportedByMe === true}
         />
       </div>
     </article>

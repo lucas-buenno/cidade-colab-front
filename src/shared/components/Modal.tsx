@@ -31,14 +31,14 @@ export function Modal({ open, title, children, onClose, footer }: Props) {
       <button
         type="button"
         aria-label="Fechar"
-        className="absolute inset-0 cursor-pointer bg-overlay"
+        className="motion-overlay absolute inset-0 cursor-pointer bg-overlay"
         onClick={onClose}
       />
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="relative z-10 w-[90%] max-w-lg rounded-2xl border border-border bg-surface p-8 shadow-xl"
+        className="motion-dialog relative z-10 w-[90%] max-w-lg rounded-2xl border-[4px] border-foreground bg-surface p-8 shadow-card"
       >
         <div className="flex items-start justify-between gap-4">
           <h2
@@ -52,7 +52,7 @@ export function Modal({ open, title, children, onClose, footer }: Props) {
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-lg text-muted-foreground transition-colors duration-200 hover:bg-muted hover:text-foreground"
+            className="inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-xl border-[3px] border-transparent text-muted-foreground hover:border-foreground hover:bg-muted hover:text-foreground"
             aria-label="Fechar"
           >
             <X className="size-5" aria-hidden="true" />

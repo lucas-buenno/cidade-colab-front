@@ -6,6 +6,7 @@ import {
   writeAccessToken,
 } from "@/shared/utils/tokenStorage";
 import { decodeAccessToken, isTokenFresh } from "@/shared/utils/jwt";
+import { clearCreateDraft } from "@/features/colab/draftStorage";
 
 type SessionState = {
   accessToken: string | null;
@@ -43,6 +44,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   },
   clear: () => {
     clearAccessToken();
+    clearCreateDraft();
     set({ accessToken: null, user: null });
   },
   isAuthenticated: () => {

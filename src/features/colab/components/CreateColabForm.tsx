@@ -15,15 +15,17 @@ import {
   type CreateColabFormValues,
 } from "@/features/colab/schemas";
 import { useSessionStore } from "@/features/auth/sessionStore";
-import { useSupportStore } from "@/features/feed/supportStore";
 import { Button } from "@/shared/components/Button";
 import { FormErrorSummary } from "@/shared/components/FormErrorSummary";
 import { LocationPicker } from "@/shared/components/LocationPicker";
 import { Modal } from "@/shared/components/Modal";
 import { RequestErrorBanner } from "@/shared/components/RequestErrorBanner";
 import { TextAreaField } from "@/shared/components/TextAreaField";
+import { TextField } from "@/shared/components/TextField";
 import type { AppError } from "@/shared/api/errors";
 import { messages } from "@/shared/i18n/pt-BR";
+import { IllustrationSuccess } from "@/shared/illustrations/CivicScenes";
+import arrowRightAltUrl from "@/assets/icons/arrow-right-alt.svg";
 import type { PrepareColabResponse } from "@/shared/types/colab";
 import { formatLocationName } from "@/shared/utils/location";
 import { hasColabCreatePermission } from "@/shared/utils/permissions";
@@ -53,6 +55,7 @@ export function CreateColabForm() {
   const [imageBusy, setImageBusy] = useState(false);
   const [requestError, setRequestError] = useState<AppError | null>(null);
   const [forbiddenOpen, setForbiddenOpen] = useState(false);
+  const [publishedId, setPublishedId] = useState<string | null>(null);
 
   const form = useForm<CreateColabFormValues>({
     resolver: zodResolver(createColabSchema),
@@ -97,7 +100,10 @@ export function CreateColabForm() {
       !prepared &&
       !location.street.trim() &&
       !location.neighborhood.trim();
-    if (empty) return;
+    if (empty) {
+      clearCreateDraft();
+      return;
+    }
     persistDraft(
       { title, description, categoriesSlugs, location },
       prepared,
@@ -106,23 +112,23 @@ export function CreateColabForm() {
 
   const fieldErrors = useMemo(() => {
     const items: Array<{ href: string; label: string }> = [];
+    if (errors.title?.message) {
+      items.push({ href: "#title", label: errors.title.message });
+    }
     if (errors.categoriesSlugs?.message) {
       items.push({
         href: "#categories",
         label: errors.categoriesSlugs.message,
       });
     }
-    if (errors.title?.message) {
-      items.push({ href: "#title", label: errors.title.message });
-    }
-    if (imageError) {
-      items.push({ href: "#colab-image", label: imageError });
-    }
     if (errors.description?.message) {
       items.push({
         href: "#description",
         label: errors.description.message,
       });
+    }
+    if (imageError) {
+      items.push({ href: "#colab-image", label: imageError });
     }
     if (errors.location?.street?.message) {
       items.push({
@@ -229,9 +235,8 @@ export function CreateColabForm() {
       },
       {
         onSuccess: () => {
-          useSupportStore.getState().add(prepared.colabId);
           clearCreateDraft();
-          navigate(`/colab/${prepared.colabId}`, { replace: true });
+          setPublishedId(prepared.colabId);
         },
         onError: (error) => {
           if (error.kind === "forbidden") {
@@ -250,147 +255,148 @@ export function CreateColabForm() {
     );
   };
 
+  if (publishedId) {
+    return (
+      <div className="flex flex-col items-center text-center">
+        <IllustrationSuccess
+          className="h-44 w-full text-foreground"
+          title={messages.create.successTitle}
+        />
+        <h2 className="mt-2 text-3xl font-black text-foreground">
+          {messages.create.successTitle}
+        </h2>
+        <p className="mt-2 max-w-prose text-base text-muted-foreground">
+          {messages.create.successBody}
+        </p>
+        <Button
+          type="button"
+          className="mt-6"
+          onClick={() => navigate(`/colab/${publishedId}`, { replace: true })}
+        >
+          {messages.create.seeColab}
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <>
       <form
-        className="flex flex-col"
+        className="flex flex-col gap-[25px] pt-6"
         onSubmit={handleSubmit(onSubmit, onInvalid)}
         noValidate
         data-testid="create-colab-form"
       >
         {!canCreate ? (
-          <div className="mt-4">
-            <RequestErrorBanner
-              error={{
-                kind: "forbidden",
-                message: messages.create.noPermissionBanner,
-                retryable: false,
-              }}
-              testId="create-colab-forbidden-banner"
-            />
-          </div>
+          <RequestErrorBanner
+            error={{
+              kind: "forbidden",
+              message: messages.create.noPermissionBanner,
+              retryable: false,
+            }}
+            testId="create-colab-forbidden-banner"
+          />
         ) : null}
 
         {requestError ? (
-          <div className="mt-4">
-            <RequestErrorBanner
-              error={requestError}
-              testId="create-colab-error"
-              onRetry={
-                requestError.retryable
-                  ? () => void handleSubmit(onSubmit, onInvalid)()
-                  : undefined
-              }
-            />
-          </div>
+          <RequestErrorBanner
+            error={requestError}
+            testId="create-colab-error"
+            onRetry={
+              requestError.retryable
+                ? () => void handleSubmit(onSubmit, onInvalid)()
+                : undefined
+            }
+          />
         ) : null}
 
         {submitCount > 0 ? (
-          <div className="mt-4">
-            <FormErrorSummary
-              title={messages.errors.summaryTitle}
-              items={fieldErrors}
-            />
-          </div>
+          <FormErrorSummary
+            title={messages.errors.summaryTitle}
+            items={fieldErrors}
+          />
         ) : null}
 
-        <div>
-          <label htmlFor="title" className="text-sm font-bold text-foreground">
-            {messages.create.fieldTitle}
-            <span className="text-destructive"> *</span>
-          </label>
-          <input
-            id="title"
-            aria-required="true"
-            aria-invalid={Boolean(errors.title)}
-            aria-describedby={errors.title ? "title-error" : undefined}
-            placeholder={messages.create.titlePlaceholder}
-            className={`mt-1 w-full border-0 border-b bg-transparent px-0 py-2 text-2xl font-bold text-foreground outline-none placeholder:font-bold placeholder:text-muted-foreground ${
-              errors.title ? "border-destructive" : "border-border"
-            }`}
-            {...register("title")}
-          />
-          <p
-            id="title-error"
-            role={errors.title ? "alert" : undefined}
-            className="min-h-5 text-sm text-destructive"
-          >
-            {errors.title?.message ?? ""}
-          </p>
+        <div className="flex flex-col gap-[25px] lg:grid lg:grid-cols-2 lg:gap-8">
+          <div className="flex flex-col gap-[25px]">
+            <TextField
+              id="title"
+              label={messages.create.fieldTitle}
+              aria-required="true"
+              placeholder={messages.create.titlePlaceholder}
+              error={errors.title?.message}
+              {...register("title")}
+            />
+
+            <TextAreaField
+              id="description"
+              label={messages.create.descriptionLabel}
+              placeholder={messages.create.descriptionPlaceholder}
+              hint={messages.create.descriptionHint}
+              error={errors.description?.message}
+              className="md:h-72 lg:h-80"
+              {...register("description")}
+            />
+
+            <Controller
+              control={control}
+              name="location"
+              render={({ field }) => (
+                <LocationPicker
+                  value={field.value}
+                  onChange={field.onChange}
+                  errors={{
+                    street: errors.location?.street?.message,
+                    neighborhood: errors.location?.neighborhood?.message,
+                    coordinates: errors.location?.coordinates?.message,
+                  }}
+                />
+              )}
+            />
+          </div>
+
+          <div className="flex flex-col gap-[25px]">
+            <Controller
+              control={control}
+              name="categoriesSlugs"
+              render={({ field }) => (
+                <CategoryMultiSelect
+                  id="categories"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={errors.categoriesSlugs?.message}
+                />
+              )}
+            />
+
+            <ImageUploadField
+              value={prepared}
+              onChange={setPrepared}
+              error={imageError}
+              onErrorChange={setImageError}
+              onBusyChange={setImageBusy}
+            />
+          </div>
         </div>
 
-        <div className="mt-3">
-          <Controller
-            control={control}
-            name="categoriesSlugs"
-            render={({ field }) => (
-              <CategoryMultiSelect
-                id="categories"
-                value={field.value}
-                onChange={field.onChange}
-                error={errors.categoriesSlugs?.message}
-              />
-            )}
-          />
-        </div>
-
-        <div className="mt-6">
-          <ImageUploadField
-            value={prepared}
-            onChange={setPrepared}
-            error={imageError}
-            onErrorChange={setImageError}
-            onBusyChange={setImageBusy}
-          />
-        </div>
-
-        <div className="mt-4">
-          <TextAreaField
-            id="description"
-            label={
-              <>
-                {messages.create.descriptionLabel}
-                <span className="text-destructive"> *</span>
-              </>
-            }
-            placeholder={messages.create.descriptionPlaceholder}
-            error={errors.description?.message}
-            {...register("description")}
-          />
-        </div>
-
-        <div className="mt-2 pb-28">
-          <Controller
-            control={control}
-            name="location"
-            render={({ field }) => (
-              <LocationPicker
-                value={field.value}
-                onChange={field.onChange}
-                errors={{
-                  street: errors.location?.street?.message,
-                  neighborhood: errors.location?.neighborhood?.message,
-                  coordinates: errors.location?.coordinates?.message,
-                }}
-              />
-            )}
-          />
-        </div>
-
-        <div className="sticky bottom-0 z-20 -mx-4 border-t border-border bg-background/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
-          <div className="flex flex-wrap items-center justify-end gap-3 pb-[env(safe-area-inset-bottom)]">
+        <div className="fixed inset-x-0 bottom-0 z-40 bg-white px-4 py-6 lg:static lg:z-auto lg:bg-transparent lg:p-0">
+          <div className="mx-auto w-full max-w-[402px] lg:mx-0 lg:max-w-none">
             <Button
               type="submit"
-              fullWidth={false}
               disabled={!canSubmit}
               loading={createMutation.isPending}
               loadingLabel={messages.create.publishing}
-              className="min-w-28"
               data-testid="create-colab-submit"
-              title={
-                canSubmit
-                  ? undefined
-                  : "Preencha título, descrição, categoria, foto e localização"
+              title={canSubmit ? undefined : messages.create.submitIncomplete}
+              icon={
+                <img
+                  src={arrowRightAltUrl}
+                  alt=""
+                  width={32}
+                  height={32}
+                  className="block size-8 shrink-0"
+                  aria-hidden="true"
+                />
               }
             >
               {messages.create.publish}

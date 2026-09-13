@@ -7,3 +7,5 @@ dist-ssr
 .env.*.local
 .env.development
 .DS_Store
+.cursor
+.vscode

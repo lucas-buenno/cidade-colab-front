@@ -23,6 +23,7 @@ const MAX_QUERY_LENGTH = 200;
 const MD_MEDIA_QUERY = "(min-width: 768px)";
 const CHIP_GAP_PX = 8;
 const FILTER_BUTTON_PX = 30;
+const EMPTY_CATEGORIES: CategoryResponse[] = [];
 
 export type ColabSearchValue = {
   q: string;
@@ -74,7 +75,7 @@ export function ColabSearchBar({ value, onChange }: Props) {
   valueRef.current = value;
   const closeSheet = useCallback(() => setSheetOpen(false), []);
 
-  const categories = categoriesQuery.data ?? [];
+  const categories = categoriesQuery.data ?? EMPTY_CATEGORIES;
   const featured = useMemo(
     () => pickFeaturedCategories(categories),
     [categories],
@@ -114,7 +115,7 @@ export function ColabSearchBar({ value, onChange }: Props) {
 
   useLayoutEffect(() => {
     if (!isDesktop) {
-      setVisibleExtraSlugs([]);
+      setVisibleExtraSlugs((current) => (current.length === 0 ? current : []));
       return;
     }
 

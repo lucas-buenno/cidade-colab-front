@@ -332,23 +332,21 @@ export function ImageUploadField({
         )}
       </div>
 
-      <div
-        id={progressId}
-        className="h-2 overflow-hidden rounded-lg border-[3px] border-foreground bg-muted"
-        role="progressbar"
-        aria-label={messages.create.imageProgress}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={uploading ? progress : value ? 100 : 0}
-      >
+      {uploading ? (
         <div
-          className="h-full bg-primary"
-          style={{
-            width: `${uploading ? progress : value ? 100 : 0}%`,
-            opacity: uploading || value ? 1 : 0,
-          }}
-        />
-      </div>
+          id={progressId}
+          className="h-2 overflow-hidden rounded-lg border-[3px] border-foreground bg-muted"
+          role="progressbar"
+          aria-label={messages.create.imageProgress}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={progress}
+        >
+          <div className="h-full bg-primary" style={{ width: `${progress}%` }} />
+        </div>
+      ) : (
+        <div id={progressId} className="sr-only" />
+      )}
 
       {value && !uploading ? (
         <p className="text-base font-bold text-success" role="status">

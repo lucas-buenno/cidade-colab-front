@@ -236,7 +236,7 @@ export const messages = {
     useMyLocation: "Usar minha localização",
     locating: "Obtendo sua localização…",
     fillingAddress: "Preenchendo o endereço…",
-    enterAddressManually: "Inserir endereço manualmente",
+    enterAddressManually: "Inserir endereço",
     hideAddressForm: "Ocultar endereço",
     geoDenied:
       "Não foi possível obter sua localização. Marque o ponto no mapa.",

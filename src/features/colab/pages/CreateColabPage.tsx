@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import loginShapesUrl from "@/assets/auth/login-shapes.svg";
 import arrowLeftAltUrl from "@/assets/icons/arrow-left-alt.svg";
@@ -12,6 +13,7 @@ export function CreateColabPage() {
   const subtitle = displayName
     ? messages.create.subtitleNamed.replace("{username}", displayName)
     : messages.create.subtitle;
+  const [published, setPublished] = useState(false);
 
   return (
     <div className="screen-create relative min-h-dvh overflow-hidden bg-white">
@@ -43,16 +45,18 @@ export function CreateColabPage() {
             />
           </Link>
         </div>
-        <div className="flex flex-col gap-[7px] px-4 md:px-8 lg:px-12">
-          <h1 className="text-[32px] leading-[1.031] font-extrabold tracking-[-1.6px] text-black lg:text-[40px]">
-            {messages.create.title}
-          </h1>
-          <p className="text-base leading-[1.031] tracking-[-0.8px] text-black">
-            {subtitle}
-          </p>
-        </div>
+        {published ? null : (
+          <div className="flex flex-col gap-[7px] px-4 md:px-8 lg:px-12">
+            <h1 className="text-[32px] leading-[1.031] font-extrabold tracking-[-1.6px] text-black lg:text-[40px]">
+              {messages.create.title}
+            </h1>
+            <p className="text-base leading-[1.031] tracking-[-0.8px] text-black">
+              {subtitle}
+            </p>
+          </div>
+        )}
         <div className="px-4 md:px-8 lg:px-12">
-          <CreateColabForm />
+          <CreateColabForm onPublished={() => setPublished(true)} />
         </div>
       </main>
     </div>

@@ -209,6 +209,9 @@ export const messages = {
     imageDrop: "Clique aqui para escolher a foto",
     imageChange: "Trocar foto",
     imageRemove: "Remover foto",
+    imageAdjustHint: "Arraste a foto para centralizar o que você quer destacar.",
+    imageAdjustAria:
+      "Pré-visualização da foto. Arraste ou use as setas para ajustar o recorte.",
     imageRequired: "Envie uma foto para publicar.",
     imageEmpty: "Este arquivo está vazio. Escolha outra foto.",
     imageTooLarge: "Esta foto ultrapassa 10 MB. Envie uma menor.",
@@ -251,9 +254,9 @@ export const messages = {
       "Você está logado, mas ainda não tem permissão para criar colaborações. Fale com a equipe se isso for um engano.",
     forbiddenClose: "Entendi",
     imageProgress: "Progresso do envio da foto",
-    successTitle: "Colab no ar!",
+    successTitle: "Colaboração publicada!",
     successBody:
-      "A comunidade já pode ver, apoiar e ajudar a resolver essa ocorrência.",
+      "Sua ocorrência já está no feed. A comunidade pode ver, apoiar e ajudar a resolver.",
     seeColab: "Ver colaboração",
   },
 

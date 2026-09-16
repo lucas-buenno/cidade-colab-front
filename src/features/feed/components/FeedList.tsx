@@ -6,6 +6,7 @@ import { useFeed } from "@/features/feed/hooks/useFeed";
 import { searchHasRequiredFilter } from "@/features/search/api";
 import type { ColabSearchValue } from "@/features/search/components/ColabSearchBar";
 import { useColabSearch } from "@/features/search/hooks/useColabSearch";
+import { flattenFeedItems } from "@/shared/utils/feedPage";
 import { ColabCard } from "./ColabCard";
 import { ColabCardSkeleton } from "./ColabCardSkeleton";
 import { ColabEmptyState } from "./ColabEmptyState";
@@ -66,7 +67,7 @@ export function FeedList({ search }: Props) {
     isLoading ||
     searchRefreshing ||
     (qPending && search.q.trim().length > 0);
-  const items = data?.pages.flatMap((page) => page.items) ?? [];
+  const items = flattenFeedItems(data?.pages);
   const emptyTitle = searching ? messages.feed.search.empty : messages.feed.empty;
   const emptyHint = searching
     ? messages.feed.search.emptyHint

@@ -46,9 +46,11 @@ export function ColabCard({ colab }: Props) {
         </div>
       ) : null}
 
-      {colab.categories.length > 0 ? (
+      {(colab.categories ?? []).length > 0 ? (
         <div className="flex flex-wrap items-center gap-[17px]">
-          {colab.categories.map((category) => (
+          {colab.categories
+            .filter((category) => category?.slug)
+            .map((category) => (
             <CategoryBadge
               key={category.slug}
               name={category.name}

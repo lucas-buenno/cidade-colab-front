@@ -23,7 +23,7 @@ function patchColabSupport(
   colabId: string,
   support: SupportResponse,
 ): ColabResponse {
-  if (colab.id !== colabId) return colab;
+  if (!colab || colab.id !== colabId) return colab;
   return {
     ...colab,
     supportCount: support.supportCount,
@@ -46,8 +46,8 @@ function applySupportResponse(
       ...old,
       pages: old.pages.map((page) => ({
         ...page,
-        items: page.items.map((item) =>
-          patchColabSupport(item, colabId, support),
+        items: (page.items ?? []).map((item) =>
+          item ? patchColabSupport(item, colabId, support) : item,
         ),
       })),
     };
@@ -61,7 +61,7 @@ function applySupportResponse(
 
   queryClient.setQueriesData<ColabResponse[]>(
     { queryKey: USER_COLABS_QUERY_KEY_PREFIX },
-    (old) => old?.map((item) => patchColabSupport(item, colabId, support)),
+    (old) => old?.filter(Boolean).map((item) => patchColabSupport(item, colabId, support)),
   );
 }
 

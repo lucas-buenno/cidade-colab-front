@@ -48,7 +48,18 @@ apiClient.interceptors.request.use((config) => {
 });
 
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const contentType = String(response.headers["content-type"] ?? "");
+    if (contentType.includes("text/html")) {
+      return Promise.reject(
+        normalizeHttpError({
+          message: "Invalid API response",
+          response: { status: 502 },
+        }),
+      );
+    }
+    return response;
+  },
   (error: AxiosError) => {
     const status = error.response?.status;
     const config = error.config;

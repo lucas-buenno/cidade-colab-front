@@ -166,15 +166,22 @@ export function IllustrationSuccess({ className, title }: SceneProps) {
       className={className}
     >
       {title ? <title>{title}</title> : null}
-      <circle cx="180" cy="128" r="86" fill="var(--color-primary)" />
-      <circle cx="148" cy="120" r="24" fill="#e8b896" />
-      <circle cx="212" cy="120" r="24" fill="#8d5524" />
-      <path d="M132 112c8-16 28-12 32 4" fill="#2c1b18" />
-      <path d="M196 110c10-16 30-10 32 6" fill="#121212" />
-      <path d="M140 132c6 8 16 8 22 0" {...stroke} />
-      <path d="M204 132c6 8 16 8 22 0" {...stroke} />
-      <path d="M168 148c8 10 16 10 24 0" {...stroke} />
-      <path d="M126 168c10 10 28 18 54 18s44-8 54-18" {...stroke} />
+      <rect x="28" y="204" width="304" height="16" fill="#1b190d" />
+      <rect x="48" y="52" width="168" height="140" fill="#ffffff" stroke="#1b190d" strokeWidth="3" />
+      <rect x="68" y="72" width="128" height="64" fill="#fedbff" stroke="#1b190d" strokeWidth="3" />
+      <rect x="68" y="148" width="88" height="10" fill="#1b190d" />
+      <rect x="68" y="166" width="56" height="8" fill="#fcff05" stroke="#1b190d" strokeWidth="2" />
+      <rect x="236" y="72" width="88" height="88" fill="#fcff05" stroke="#1b190d" strokeWidth="3" />
+      <path
+        d="M258 116l18 18 32-36"
+        fill="none"
+        stroke="#1b190d"
+        strokeWidth="8"
+        strokeLinecap="square"
+        strokeLinejoin="miter"
+      />
+      <rect x="88" y="176" width="28" height="28" fill="#1b190d" />
+      <rect x="256" y="160" width="28" height="44" fill="#f634f9" stroke="#1b190d" strokeWidth="3" />
     </svg>
   );
 }

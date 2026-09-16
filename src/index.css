@@ -168,6 +168,13 @@ body {
 }
 
 .screen-create {
+  --field-ink: #3b304c;
+  --field-placeholder: #4c4c4c;
+  --foreground: #121212;
+  --surface: #ffffff;
+  --muted-foreground: #3d3a36;
+  --destructive: #dc2626;
+  color-scheme: light;
   background-color: #ffffff;
 }
 

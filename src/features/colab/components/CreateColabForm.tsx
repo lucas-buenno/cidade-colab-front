@@ -41,7 +41,11 @@ function persistDraft(
   });
 }
 
-export function CreateColabForm() {
+type Props = {
+  onPublished?: () => void;
+};
+
+export function CreateColabForm({ onPublished }: Props) {
   const navigate = useNavigate();
   const user = useSessionStore((state) => state.user);
   const canCreate = hasColabCreatePermission(user);
@@ -237,6 +241,7 @@ export function CreateColabForm() {
         onSuccess: () => {
           clearCreateDraft();
           setPublishedId(prepared.colabId);
+          onPublished?.();
         },
         onError: (error) => {
           if (error.kind === "forbidden") {
@@ -259,13 +264,13 @@ export function CreateColabForm() {
     return (
       <div className="flex flex-col items-center text-center">
         <IllustrationSuccess
-          className="h-44 w-full text-foreground"
+          className="h-44 w-full"
           title={messages.create.successTitle}
         />
-        <h2 className="mt-2 text-3xl font-black text-foreground">
+        <h1 className="mt-4 text-[32px] leading-[1.031] font-extrabold tracking-[-1.6px] text-black lg:text-[40px]">
           {messages.create.successTitle}
-        </h2>
-        <p className="mt-2 max-w-prose text-base text-muted-foreground">
+        </h1>
+        <p className="mt-2 max-w-prose text-base leading-[1.031] tracking-[-0.8px] text-black">
           {messages.create.successBody}
         </p>
         <Button

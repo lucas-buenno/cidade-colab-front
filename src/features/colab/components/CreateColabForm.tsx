@@ -345,24 +345,6 @@ export function CreateColabForm({ onPublished }: Props) {
 
             <Controller
               control={control}
-              name="location"
-              render={({ field }) => (
-                <LocationPicker
-                  value={field.value}
-                  onChange={field.onChange}
-                  errors={{
-                    street: errors.location?.street?.message,
-                    neighborhood: errors.location?.neighborhood?.message,
-                    coordinates: errors.location?.coordinates?.message,
-                  }}
-                />
-              )}
-            />
-          </div>
-
-          <div className="flex flex-col gap-[25px]">
-            <Controller
-              control={control}
               name="categoriesSlugs"
               render={({ field }) => (
                 <CategoryMultiSelect
@@ -380,6 +362,24 @@ export function CreateColabForm({ onPublished }: Props) {
               error={imageError}
               onErrorChange={setImageError}
               onBusyChange={setImageBusy}
+            />
+          </div>
+
+          <div className="flex flex-col gap-[25px]">
+            <Controller
+              control={control}
+              name="location"
+              render={({ field }) => (
+                <LocationPicker
+                  value={field.value}
+                  onChange={field.onChange}
+                  errors={{
+                    street: errors.location?.street?.message,
+                    neighborhood: errors.location?.neighborhood?.message,
+                    coordinates: errors.location?.coordinates?.message,
+                  }}
+                />
+              )}
             />
           </div>
         </div>

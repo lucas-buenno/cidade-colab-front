@@ -1,5 +1,6 @@
 import { apiClient } from "@/shared/api/client";
 import type { FeedPage } from "@/shared/types/colab";
+import { normalizeFeedPage } from "@/shared/utils/feedPage";
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 50;
@@ -62,8 +63,8 @@ export async function searchColabs(
     search.set("pageToken", params.pageToken);
   }
 
-  const { data } = await apiClient.get<FeedPage>(
+  const { data } = await apiClient.get<unknown>(
     `/v1/colabs/search?${search.toString()}`,
   );
-  return data;
+  return normalizeFeedPage(data);
 }

@@ -5,14 +5,14 @@ import { MyColabCard } from "@/features/profile/components/MyColabCard";
 import { MyColabCardSkeleton } from "@/features/profile/components/MyColabCardSkeleton";
 import { messages } from "@/shared/i18n/pt-BR";
 import { IllustrationGarden } from "@/shared/illustrations/CivicScenes";
+import { flattenFeedItems } from "@/shared/utils/feedPage";
 
 export function MyColabsPage() {
   const user = useSessionStore((state) => state.user);
   const feed = useFeed();
-  const mine =
-    feed.data?.pages
-      .flatMap((page) => page.items)
-      .filter((colab) => colab.username === user?.username) ?? [];
+  const mine = flattenFeedItems(feed.data?.pages).filter(
+    (colab) => colab.username === user?.username,
+  );
 
   return (
     <div className="screen-feed min-h-dvh bg-white">

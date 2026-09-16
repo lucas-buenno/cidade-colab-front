@@ -1,5 +1,6 @@
 import { apiClient } from "@/shared/api/client";
 import type { FeedPage, SupportResponse } from "@/shared/types/colab";
+import { normalizeFeedPage } from "@/shared/utils/feedPage";
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 50;
@@ -15,8 +16,8 @@ export async function fetchFeedPage(
     params.set("pageToken", pageToken);
   }
 
-  const { data } = await apiClient.get<FeedPage>(`/v1/feed?${params.toString()}`);
-  return data;
+  const { data } = await apiClient.get<unknown>(`/v1/feed?${params.toString()}`);
+  return normalizeFeedPage(data);
 }
 
 export async function supportColab(colabId: string): Promise<SupportResponse> {
